@@ -12,6 +12,7 @@ from services.etl.etl_data_gx_demo import (
     capture_user_data,
     capture_yellow_trip_data,
 )
+from common.alerts import airflow_on_failure_callback
 
 
 with DAG(
@@ -23,6 +24,8 @@ with DAG(
     catchup=False,
     max_active_tasks=3,
     max_active_runs=1,
+    on_failure_callback=airflow_on_failure_callback,
+    sla_miss_callback=airflow_on_failure_callback,
 ):
     validate_user_data = GreatExpectationsOperator(
         task_id="validate_user_data",
@@ -30,6 +33,7 @@ with DAG(
         checkpoint_name="user",
         fail_task_on_validation_failure=True,
         return_json_dict=True,
+        sla=timedelta(minutes=3),
     )
     etl_user_data = PythonOperator(
         task_id="etl_user_data",
@@ -37,6 +41,7 @@ with DAG(
         depends_on_past=False,
         retries=0,
         execution_timeout=timedelta(minutes=10),
+        sla=timedelta(minutes=10),
     )
     validate_yellow_trip_data = GreatExpectationsOperator(
         task_id="validate_yellow_trip_data",
@@ -44,12 +49,14 @@ with DAG(
         checkpoint_name="yellow_trip_data",
         fail_task_on_validation_failure=True,
         return_json_dict=True,
+        sla=timedelta(minutes=3),
     )
     etl_yellow_trip_data = PythonOperator(
         task_id="etl_yellow_trip_data",
         python_callable=capture_yellow_trip_data,
         depends_on_past=False,
         retries=0,
+        sla=timedelta(minutes=10),
         op_kwargs={
             "data_path": "data/yellow_tripdata_2009-12.parquet",
         },
@@ -60,6 +67,7 @@ with DAG(
         checkpoint_name="yellow_trip_data_with_spark",
         fail_task_on_validation_failure=True,
         return_json_dict=True,
+        sla=timedelta(minutes=3),
     )
     chain(
         validate_user_data,

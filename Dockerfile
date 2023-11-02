@@ -5,6 +5,14 @@ ARG group_id
 
 USER root
 
+# Install java
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+         openjdk-11-jre-headless \
+  && apt-get autoremove -yqq --purge \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
 # Add webserver configuration file
 # COPY ./webserver_config.py /opt/airflow/webserver_config.py
 
@@ -25,7 +33,9 @@ WORKDIR /opt/airflow/dags
 USER airflow
 
 # ENV PROMETHEUS_MULTIPROC_DIR=/UID/tmp/multiproc-tmp
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
 
-RUN python -m pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN python -m pip install --upgrade pip &&\
+    pip install -r requirements.txt
+
 ENTRYPOINT ["/bin/sh", "-c"]
