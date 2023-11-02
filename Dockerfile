@@ -24,7 +24,7 @@ WORKDIR /opt/airflow/dags
 
 USER airflow
 
-ENV PROMETHEUS_MULTIPROC_DIR=/UID/tmp/multiproc-tmp
+# ENV PROMETHEUS_MULTIPROC_DIR=/UID/tmp/multiproc-tmp
 
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt

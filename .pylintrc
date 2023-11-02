@@ -1,0 +1,4 @@
+[MESSAGES CONTROL]
+disable=W1203
+[FORMAT]
+max-line-length=120

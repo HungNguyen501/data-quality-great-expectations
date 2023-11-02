@@ -63,10 +63,12 @@ x-airflow-common:
     AIRFLOW__WEBSERVER__SHOW_TRIGGER_FORM_IF_NO_PARAMS: 'true'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     TEST_VAR: 'test_var'
+    POSTGRES_PASSWORD: 'airflow'
   volumes:
     - ~/Downloads/airflow/logs:/opt/airflow/logs
     - ~/Downloads/airflow/plugins:/opt/airflow/plugins
     - ~/Downloads/airflow/data:/opt/airflow/dags/data
+    - ~/Downloads/airflow/gx_output:/opt/airflow/dags/services/great_expectations/uncommitted
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -82,6 +84,8 @@ services:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
+    ports:
+      - 5432:5432
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
