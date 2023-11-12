@@ -1,12 +1,10 @@
 """Aggregate hr analytics data in dwh"""
 import logging
 
-from common.alerts import dpd_alert
 from common.connections import postgres_connection
 
 
-@dpd_alert(alert_name="aggregate_hr_analytics")
-def aggregate_hr_analytics(ymd: str):
+def aggregate_hr_analytics(ymd: str, **_):
     """Perform data aggregation from hr_analytics to employee of the year in dwh
 
     Args:

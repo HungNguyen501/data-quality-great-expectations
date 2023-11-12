@@ -3,8 +3,8 @@
 Table of Contents:
 
 1. [Reference links](#1-reference-links)
-
 2. [Deployment](#2-deployment)
+3. [Operations](#3-operations)
 
 ## 1. Reference links
 - [Official website](https://greatexpectations.io/integrations/)
@@ -14,7 +14,6 @@ Table of Contents:
 - [Expectations Gallery](https://greatexpectations.io/expectations/)
 
 ## 2. Deployment
-
 - Run following commands to start Airflow and related components:
     ```bash
     # Build docker image
@@ -23,3 +22,10 @@ Table of Contents:
     cd build
     docker-compose up
     ```
+
+## 3. Operations
+- Airflow Web: http://localhost:9120/ <br>
+    ![dag_graph](images/dag_graph.png)
+
+- Great Expectations Data Docs: http://localhost:9117/ <br>
+    ![gx_docs](images/gx_docs.png)
