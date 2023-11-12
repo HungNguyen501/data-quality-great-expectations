@@ -4,7 +4,7 @@ Table of Contents:
 
 1. [Reference links](#1-reference-links)
 
-2. [Deployment]()
+2. [Deployment](#2-deployment)
 
 ## 1. Reference links
 - [Official website](https://greatexpectations.io/integrations/)
@@ -15,8 +15,11 @@ Table of Contents:
 
 ## 2. Deployment
 
-- Run following command to start Airflow and related components:
-```bash
-docker-compose up
-```
-
+- Run following commands to start Airflow and related components:
+    ```bash
+    # Build docker image
+    bash build/build.sh
+    # Start Airflow
+    cd build
+    docker-compose up
+    ```

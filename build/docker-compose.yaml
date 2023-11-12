@@ -62,13 +62,19 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__WEBSERVER__SHOW_TRIGGER_FORM_IF_NO_PARAMS: 'true'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
-    TEST_VAR: 'test_var'
+    POSTGRES_HOST: 'postgres'
+    POSTGRES_PORT: '5432'
+    POSTGRES_USER: 'airflow'
     POSTGRES_PASSWORD: 'airflow'
+    TELEGRAM_API_TOKEN: '5597643511:AAE4G21igopMByHILt_sMLU2yuy5d9evvEA'
+    TELEGRAM_CHAT_ID: '-872074032'
   volumes:
     - ~/Downloads/airflow/logs:/opt/airflow/logs
     - ~/Downloads/airflow/plugins:/opt/airflow/plugins
     - ~/Downloads/airflow/data:/opt/airflow/dags/data
-    - ~/Downloads/airflow/gx_output:/opt/airflow/dags/services/great_expectations/uncommitted
+    - ~/Downloads/airflow/gx_output/data_docs:/opt/airflow/dags/services/great_expectations/uncommitted/data_docs
+    - ~/Downloads/airflow/gx_output/validations:/opt/airflow/dags/services/great_expectations/uncommitted/validations
+    - ~/Projects/great-expectations-research/build/spark-defaults.conf:/home/airflow/.local/lib/python3.11/site-packages/pyspark/conf/spark-defaults.conf
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -85,7 +91,12 @@ services:
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     ports:
-      - 5432:5432
+      # - 5432:5311
+      - target: 5432
+        host_ip: 127.0.0.1
+        published: 5311
+        protocol: tcp
+        mode: host
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
@@ -110,7 +121,11 @@ services:
     entrypoint: /entrypoint
     command: webserver
     ports:
-      - 8080:8080
+      - target: 8080
+        host_ip: 127.0.0.1
+        published: "9120"
+        protocol: tcp
+        mode: host
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 10s
@@ -141,6 +156,21 @@ services:
     <<: *airflow-common
     entrypoint: /entrypoint
     command: celery worker
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 16G
+        reservations:
+          cpus: '0.50'
+          memory: 16G
+    ports:
+      - "8500-8520:8500-8520"
+      - "7373-7379:7373-7379"
+    extra_hosts:
+      - "hdfs.zalopay.vn:10.50.1.69"
+      - "hdfsslave1.zalopay.vn:10.50.1.70"
+      - "hdfsslave2.zalopay.vn:10.50.1.71"
     healthcheck:
       test:
         - "CMD-SHELL"
@@ -236,6 +266,21 @@ services:
     user: "0:0"
     volumes:
       - ~/Downloads/airflow:/sources
+
+  gx_docs:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        cd services/great_expectations/uncommitted/data_docs/local_site/ && \
+        python3 -m http.server 8888
+    ports:
+      - target: 8888
+        host_ip: 127.0.0.1
+        published: "9117"
+        protocol: tcp
+        mode: host
 
 volumes:
   postgres-db-volume:

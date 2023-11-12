@@ -1,9 +1,9 @@
-name: user
+name: dpd_checkpoint
 config_version: 1.0
 template_name:
 module_name: great_expectations.checkpoint
-class_name: SimpleCheckpoint
-run_name_template: '%Y%m%d-%H%M%S-user-data'
+class_name: Checkpoint
+run_name_template: '%Y%m%d-%H%M%S-dpd-checkpoint'
 expectation_suite_name:
 batch_request: {}
 action_list:
@@ -18,14 +18,7 @@ action_list:
       class_name: UpdateDataDocsAction
 evaluation_parameters: {}
 runtime_configuration: {}
-validations:
-  - batch_request:
-      datasource_name: postgres
-      data_connector_name: default_inferred_data_connector_name
-      data_asset_name: public.user
-      data_connector_query:
-        index: -1
-    expectation_suite_name: user_data_suite
+validations:  []
 profilers: []
 ge_cloud_id:
 expectation_suite_ge_cloud_id:

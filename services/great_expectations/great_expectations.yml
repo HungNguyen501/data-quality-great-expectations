@@ -20,11 +20,11 @@ datasources:
       class_name: SqlAlchemyExecutionEngine
       module_name: great_expectations.execution_engine
       credentials:
-        host: postgres
-        port: 5432
-        username: airflow
-        password: ${postgres_password}
-        database: hungnd8
+        host: ${POSTGRES_HOST}
+        port: ${POSTGRES_PORT}
+        username: ${POSTGRES_USER}
+        password: ${POSTGRES_PASSWORD}
+        database: hr_analytics
         drivername: postgresql
     data_connectors:
       default_runtime_data_connector_name:
@@ -32,7 +32,7 @@ datasources:
         class_name: RuntimeDataConnector
         module_name: great_expectations.datasource.data_connector
         batch_identifiers:
-          - default_identifier_name
+          - airflow_run_id
       default_inferred_data_connector_name:
         name: default_inferred_data_connector_name
         class_name: InferredAssetSqlDataConnector
@@ -40,7 +40,7 @@ datasources:
         include_schema_name: true
         introspection_directives:
           schema_name: public
-  filesystem:
+  local_file_system:
     class_name: Datasource
     module_name: great_expectations.datasource
     execution_engine:
@@ -50,11 +50,14 @@ datasources:
       default_inferred_data_connector_name:
         class_name: InferredAssetFilesystemDataConnector
         module_name: great_expectations.datasource.data_connector
-        base_directory: ../../data
+        base_directory: ../../data/raw_zone
+        glob_directive: "*/*/*.parquet"
         default_regex:
           group_names:
+            - table_name
+            - ymd
             - data_asset_name
-          pattern: (.*)
+          pattern: (.*)/(\d{8})/(.*)\.parquet
       default_runtime_data_connector_name:
         class_name: RuntimeDataConnector
         module_name: great_expectations.datasource.data_connector
@@ -64,26 +67,17 @@ datasources:
             module_name: great_expectations.datasource.data_connector.asset
             batch_identifiers:
               - runtime_batch_identifier_name
-  filesystem_spark:
+  sandbox_hdfs:
     class_name: Datasource
-    module_name: great_expectations.datasource
-    data_connectors:
-      default_inferred_data_connector_name:
-        module_name: great_expectations.datasource.data_connector
-        base_directory: ../../data
-        class_name: InferredAssetFilesystemDataConnector
-        default_regex:
-          group_names:
-            - data_asset_name
-          pattern: (.*)
-      default_runtime_data_connector_name:
-        module_name: great_expectations.datasource.data_connector
-        batch_identifiers:
-          - default_identifier_name
-        class_name: RuntimeDataConnector
     execution_engine:
-      module_name: great_expectations.execution_engine
       class_name: SparkDFExecutionEngine
+      spark_config:
+        spark.master: local[*]
+    data_connectors:
+      sandbox_hdfs_runtime_connector:
+        class_name: RuntimeDataConnector
+        batch_identifiers:
+          - airflow_run_id
 config_variables_file_path: uncommitted/config_variables.yml
 
 # The plugins_directory will be added to your python path for custom modules

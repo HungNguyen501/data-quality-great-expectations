@@ -1,0 +1,57 @@
+# Configs for hr_analytics
+
+raw_hr_analytics:
+  run_name_template: '%Y%m%d-%H%M%S-validate_raw_hr_analytics'
+  validations:
+    - batch_request:
+        datasource_name: 'sandbox_hdfs'
+        data_connector_name: 'sandbox_hdfs_runtime_connector'
+        data_asset_name: 'raw_hr_analytics'
+        batch_spec_passthrough:
+          reader_method: 'parquet'
+        runtime_parameters:
+            path: '/opt/airflow/dags/data/raw_zone/hr_analytics/{ymd}'
+        batch_identifiers:
+            airflow_run_id: '{{ task_instance_key_str }}'
+      expectation_suite_name: 'raw_hr_analytics_suite'
+
+clean_hr_analytics:
+  run_name_template: '%Y%m%d-%H%M%S-validate_clean_hr_analytics'
+  validations:
+    - batch_request:
+        datasource_name: 'sandbox_hdfs'
+        data_connector_name: 'sandbox_hdfs_runtime_connector'
+        data_asset_name: 'clean_hr_analytics'
+        batch_spec_passthrough:
+          reader_method: 'parquet'
+        runtime_parameters:
+          path: '/opt/airflow/dags/data/clean_zone/hr_analytics/{ymd}'
+        batch_identifiers:
+          airflow_run_id: '{{ task_instance_key_str }}'
+      expectation_suite_name: 'clean_hr_analytics_suite'
+
+dwh_hr_analytics_data:
+  run_name_template: '%Y%m%d-%H%M%S-validate_dwh_hr_analytics_data'
+  validations:
+    - batch_request:
+        datasource_name: 'postgres'
+        data_connector_name: 'default_runtime_data_connector_name'
+        data_asset_name: 'public.data'
+        runtime_parameters:
+          query: "select * from public.data where ymd = '{ymd}'"
+        batch_identifiers:
+          airflow_run_id: '{{ task_instance_key_str }}'
+      expectation_suite_name: 'dwh_hr_analytics_data_suite'
+
+dwh_employee_of_the_year:
+  run_name_template: '%Y%m%d-%H%M%S-validate_dwh_employee_of_the_year'
+  validations:
+    - batch_request:
+        datasource_name: 'postgres'
+        data_connector_name: 'default_runtime_data_connector_name'
+        data_asset_name: 'employee_of_the_year'
+        runtime_parameters:
+          query: "select * from employee_of_the_year where ymd = '{ymd}'"
+        batch_identifiers:
+          airflow_run_id: '{{ task_instance_key_str }}'
+      expectation_suite_name: 'dwh_hr_analytics_employee_of_the_year_suite'

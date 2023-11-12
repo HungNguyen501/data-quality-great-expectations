@@ -1,4 +1,4 @@
-""" Unit test for configs module """
+"""Unit test for configs module"""
 from unittest.mock import patch
 from common.configs import Config
 

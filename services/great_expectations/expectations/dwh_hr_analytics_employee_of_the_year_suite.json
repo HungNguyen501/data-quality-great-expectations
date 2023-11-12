@@ -1,0 +1,35 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "dwh_hr_analytics_employee_of_the_year_suite",
+  "expectations": [
+    {
+        "expectation_type": "expect_table_row_count_to_be_between",
+        "kwargs": {
+            "min_value": 1,
+            "max_value": 1000
+        },
+        "meta": {}
+    },
+    {
+        "expectation_type": "expect_column_values_to_be_between",
+        "kwargs": {
+          "column": "rank_score",
+          "max_value": 10
+        },
+        "meta": {}
+    },
+    {
+        "expectation_type": "expect_column_values_to_match_regex",
+        "kwargs": {
+        "column": "empid",
+        "regex": "^[a-zA-Z0-9]{64}$",
+        "mostly": 1.0
+        },
+        "meta": {}
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "great_expectations_version": "0.17.23"
+  }
+}
