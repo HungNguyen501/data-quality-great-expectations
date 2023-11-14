@@ -74,7 +74,6 @@ x-airflow-common:
     - ~/Downloads/airflow/data:/opt/airflow/dags/data
     - ~/Downloads/airflow/gx_output/data_docs:/opt/airflow/dags/services/great_expectations/uncommitted/data_docs
     - ~/Downloads/airflow/gx_output/validations:/opt/airflow/dags/services/great_expectations/uncommitted/validations
-    - ~/Projects/great-expectations-research/build/spark-defaults.conf:/home/airflow/.local/lib/python3.11/site-packages/pyspark/conf/spark-defaults.conf
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -164,13 +163,13 @@ services:
         reservations:
           cpus: '0.50'
           memory: 16G
-    ports:
-      - "8500-8520:8500-8520"
-      - "7373-7379:7373-7379"
-    extra_hosts:
-      - "hdfs.zalopay.vn:10.50.1.69"
-      - "hdfsslave1.zalopay.vn:10.50.1.70"
-      - "hdfsslave2.zalopay.vn:10.50.1.71"
+    # ports:
+    #   - "8500-8520:8500-8520"
+    #   - "7373-7379:7373-7379"
+    # extra_hosts:
+    #   - "hdfs.zalopay.vn:10.50.1.69"
+    #   - "hdfsslave1.zalopay.vn:10.50.1.70"
+    #   - "hdfsslave2.zalopay.vn:10.50.1.71"
     healthcheck:
       test:
         - "CMD-SHELL"
@@ -274,9 +273,9 @@ services:
       - -c
       - |
         cd services/great_expectations/uncommitted/data_docs/local_site/ && \
-        python3 -m http.server 8888
+        python3 -m http.server 9117
     ports:
-      - target: 8888
+      - target: 9117
         host_ip: 127.0.0.1
         published: "9117"
         protocol: tcp

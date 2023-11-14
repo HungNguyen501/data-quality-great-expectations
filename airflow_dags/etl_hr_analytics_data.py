@@ -21,7 +21,7 @@ def load_checkpoint_config(ymd: str) -> dict:
     Args:
         ymd(str): date to run in format YYYYMMDD
 
-    Return config as dict
+    Returns config as dict
     """
     with open(
         file="services/great_expectations/configs/hr_analytics.yml",
@@ -120,7 +120,6 @@ with DAG(
         on_failure_callback=airflow_on_failure_callback,
         retries=0,
         sla=timedelta(minutes=10),
-        on_failure_callback=airflow_on_failure_callback,
         op_kwargs={
             "ymd": LOGICAL_DATE_NODASH,
         },

@@ -1,10 +1,11 @@
 """Test module transformer"""
-from unittest.mock import patch, call
+from unittest.mock import patch, call, MagicMock
 
 
 import pytest
 from pyspark.sql import SparkSession
 from services.etl.etl_hr_analytics.transformer import (
+    validate_df,
     filter_data,
     encrypt_data,
     main,
@@ -25,6 +26,15 @@ def gen_spark_test():
     )
     yield spark_test
     spark_test.stop()
+
+
+def test_validate_df():
+    """Test function validate_df"""
+    mock_gx = MagicMock()
+    mock_df = MagicMock()
+    validate_df(mock_gx, mock_df)
+    assert mock_gx.get_checkpoint.call_args_list == [call(name="dpd_checkpoint")]
+    assert mock_gx.get_checkpoint.return_value.run.return_value.to_json_dict.called
 
 
 def test_filter_data(spark: SparkSession):  # ignore W0621
@@ -54,22 +64,33 @@ def test_encrypt_data(spark: SparkSession):  # ignore W0621
 
 
 @patch("services.etl.etl_hr_analytics.transformer.sys.argv", [None, "foo", "ver"])
+@patch(
+    "services.etl.etl_hr_analytics.transformer.validate_df",
+    side_effect=[{"success": True}, {"success": False}]
+)
 @patch("services.etl.etl_hr_analytics.transformer.filter_data")
 @patch("services.etl.etl_hr_analytics.transformer.encrypt_data")
 @patch("services.etl.etl_hr_analytics.transformer.SparkSession")
+@patch("services.etl.etl_hr_analytics.transformer.data_context")
 def test_main(
+    mock_gx,
     mock_spark_session,
     mock_encrypt_data,
     *_
 ):
     """Test function main"""
     main()
+    assert mock_gx.get_context.call_args_list == [
+        call(context_root_dir="services/great_expectations")
+    ]
     assert mock_spark_session.builder.master.return_value \
         .appName.return_value \
         .getOrCreate.return_value \
         .read.parquet.call_args_list == [call("foo")]
-    assert mock_encrypt_data.return_value \
-        .coalesce.call_args_list == [call(numPartitions=1)]
+    assert mock_encrypt_data.return_value.persist.called
     assert mock_encrypt_data.return_value \
         .coalesce.return_value \
         .write.parquet.call_args_list == [call(path="ver", mode="overwrite")]
+
+    with pytest.raises(RuntimeError):  # Test with RuntimeError Exception
+        main()
