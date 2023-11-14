@@ -37,7 +37,7 @@ def test_validate_df():
     assert mock_gx.get_checkpoint.return_value.run.return_value.to_json_dict.called
 
 
-def test_filter_data(spark: SparkSession):  # ignore W0621
+def test_filter_data(spark: SparkSession):
     """Test function filter_data"""
     df_test = spark.read.csv(
         path="services/etl/etl_hr_analytics/tests/sample/input_filter_data.csv",
@@ -48,7 +48,7 @@ def test_filter_data(spark: SparkSession):  # ignore W0621
     assert len(df_result.columns) == 21
 
 
-def test_encrypt_data(spark: SparkSession):  # ignore W0621
+def test_encrypt_data(spark: SparkSession):
     """Test function encrypt_data"""
     df_test = spark.read.csv(
         path="services/etl/etl_hr_analytics/tests/sample/input_encrypt_data.csv",
