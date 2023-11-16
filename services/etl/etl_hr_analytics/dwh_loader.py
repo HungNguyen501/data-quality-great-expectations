@@ -14,13 +14,15 @@ def load_to_dwh():
     postgres_port = sys.argv[4]
     postgres_user = sys.argv[5]
     postgres_password = sys.argv[6]
-    logging.info(f"input_file={input_file}")
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    logger.info(f"input_file={input_file}")
     spark: SparkSession = SparkSession.builder \
         .master("local[*]") \
         .appName(name="job-dwh-loader") \
         .getOrCreate()
     df_hr_analytics = spark.read.parquet(input_file)
-    logging.info(f"row_count={df_hr_analytics.count()}")
+    logger.info(f"row_count={df_hr_analytics.count()}")
     df_hr_analytics = df_hr_analytics.withColumn(colName="ymd", col=SF.lit(ymd))
     df_hr_analytics.write \
         .mode(saveMode="append") \

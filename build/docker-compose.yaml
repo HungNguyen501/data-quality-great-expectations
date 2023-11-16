@@ -71,9 +71,10 @@ x-airflow-common:
   volumes:
     - ~/Downloads/airflow/logs:/opt/airflow/logs
     - ~/Downloads/airflow/plugins:/opt/airflow/plugins
-    - ~/Downloads/airflow/data:/opt/airflow/dags/data
-    - ~/Downloads/airflow/gx_output/data_docs:/opt/airflow/dags/services/great_expectations/uncommitted/data_docs
-    - ~/Downloads/airflow/gx_output/validations:/opt/airflow/dags/services/great_expectations/uncommitted/validations
+    - ~/Downloads/airflow/data:/opt/airflow/data
+    - ~/Projects/great-expectations-research/airflow_dags:/opt/airflow/dags/airflow_dags
+    - ~/Projects/great-expectations-research/common:/opt/airflow/dags/common
+    - ~/Projects/great-expectations-research/services:/opt/airflow/dags/services
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on

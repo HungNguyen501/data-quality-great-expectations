@@ -18,10 +18,10 @@ def aggregate_hr_analytics(ymd: str, **_):
             SELECT
                 empid,
                 department,
-                (Education + JobLevel + MonthlyRate + PercentSalaryHike +
-                PerformanceRating + RelationshipSatisfaction + StandardHours +
-                StockOptionLevel + TotalWorkingYears + TrainingTimesLastYear + WorkLifeBalance +
-                YearsAtCompany + YearsInCurrentRole + YearsSinceLastPromotion) AS point
+                (education + joblevel + monthlyrate + percentsalaryhike +
+                performancerating + relationshipsatisfaction + standardhours +
+                stockoptionlevel + totalworkingyears + trainingtimeslastyear + worklifebalance +
+                yearsatcompany + yearsincurrentrole + yearssincelastpromotion) as point
             FROM
                 data
             WHERE

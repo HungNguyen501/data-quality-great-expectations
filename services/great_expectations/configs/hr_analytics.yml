@@ -10,7 +10,7 @@ raw_hr_analytics:
         batch_spec_passthrough:
           reader_method: 'parquet'
         runtime_parameters:
-            path: '/opt/airflow/dags/data/raw_zone/hr_analytics/{ymd}'
+            path: '/opt/airflow/data/raw_zone/hr_analytics/{ymd}'
         batch_identifiers:
             airflow_run_id: '{{ task_instance_key_str }}'
       expectation_suite_name: 'raw_hr_analytics_suite'
@@ -25,7 +25,7 @@ clean_hr_analytics:
         batch_spec_passthrough:
           reader_method: 'parquet'
         runtime_parameters:
-          path: '/opt/airflow/dags/data/clean_zone/hr_analytics/{ymd}'
+          path: '/opt/airflow/data/clean_zone/hr_analytics/{ymd}'
         batch_identifiers:
           airflow_run_id: '{{ task_instance_key_str }}'
       expectation_suite_name: 'clean_hr_analytics_suite'

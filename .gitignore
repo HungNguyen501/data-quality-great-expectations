@@ -1,2 +1,5 @@
 __pycache__
 .coverage
+.gitlab-ci.yml
+data_docs
+validations

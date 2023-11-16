@@ -60,8 +60,8 @@ with DAG(
         sla=timedelta(minutes=30),
         application="services/etl/etl_hr_analytics/transformer.py",
         application_args=[
-            f"/opt/airflow/dags/data/raw_zone/hr_analytics/{LOGICAL_DATE_NODASH}",
-            f"/opt/airflow/dags/data/clean_zone/hr_analytics/{LOGICAL_DATE_NODASH}",
+            f"/opt/airflow/data/raw_zone/hr_analytics/{LOGICAL_DATE_NODASH}",
+            f"/opt/airflow/data/clean_zone/hr_analytics/{LOGICAL_DATE_NODASH}",
         ],
         conf={
             "spark.master": "local[*]",
@@ -88,7 +88,7 @@ with DAG(
         application="services/etl/etl_hr_analytics/dwh_loader.py",
         application_args=[
             LOGICAL_DATE_NODASH,
-            f"/opt/airflow/dags/data/clean_zone/hr_analytics/{LOGICAL_DATE_NODASH}",
+            f"/opt/airflow/data/clean_zone/hr_analytics/{LOGICAL_DATE_NODASH}",
             Config.os_get(OsVariable.POSTGRES_HOST),
             Config.os_get(OsVariable.POSTGRES_PORT),
             Config.os_get(OsVariable.POSTGRES_USER),
