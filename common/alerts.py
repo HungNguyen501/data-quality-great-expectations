@@ -1,7 +1,4 @@
 """Alert modules"""
-import logging
-import traceback
-
 from airflow.utils.context import Context
 from telegram import Bot
 from common.configs import Config, OsVariable
@@ -19,26 +16,6 @@ def _send_to_telegram(title: str, content: str):
         chat_id=Config.os_get(key=OsVariable.TELEGRAM_CHAT_ID),
         text=f"{title}\n{content}"
     )
-
-
-def dpd_alert(alert_name, exceptions=(Exception,), suppress=False):
-    """ DPD alert decorator """
-    def wrapper(func):
-        def inner(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except exceptions as exc:
-                _send_to_telegram(
-                    title=alert_name,
-                    content=traceback.format_exc(),
-                )
-                if suppress:
-                    logging.warning(f"Suppressed error: {exc}")
-                    return None
-                raise
-
-        return inner
-    return wrapper
 
 
 def airflow_on_failure_callback(context: Context):

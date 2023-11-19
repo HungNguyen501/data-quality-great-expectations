@@ -66,8 +66,8 @@ x-airflow-common:
     POSTGRES_PORT: '5432'
     POSTGRES_USER: 'airflow'
     POSTGRES_PASSWORD: 'airflow'
-    TELEGRAM_API_TOKEN: '5597643511:AAE4G21igopMByHILt_sMLU2yuy5d9evvEA'
-    TELEGRAM_CHAT_ID: '-872074032'
+    TELEGRAM_API_TOKEN: 'Place your tele bot token here'
+    TELEGRAM_CHAT_ID: 'Place your chat id here'
   volumes:
     - ~/Downloads/airflow/logs:/opt/airflow/logs
     - ~/Downloads/airflow/plugins:/opt/airflow/plugins
@@ -281,6 +281,13 @@ services:
         published: "9117"
         protocol: tcp
         mode: host
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - 'curl -Ssf localhost:9117'
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
 volumes:
   postgres-db-volume:
