@@ -66,14 +66,15 @@ x-airflow-common:
     POSTGRES_PORT: '5432'
     POSTGRES_USER: 'airflow'
     POSTGRES_PASSWORD: 'airflow'
-    TELEGRAM_API_TOKEN: '5597643511:AAE4G21igopMByHILt_sMLU2yuy5d9evvEA'
-    TELEGRAM_CHAT_ID: '-872074032'
+    TELEGRAM_API_TOKEN: 'Place your tele bot token here'
+    TELEGRAM_CHAT_ID: 'Place your chat id here'
   volumes:
     - ~/Downloads/airflow/logs:/opt/airflow/logs
     - ~/Downloads/airflow/plugins:/opt/airflow/plugins
-    - ~/Downloads/airflow/data:/opt/airflow/dags/data
-    - ~/Downloads/airflow/gx_output/data_docs:/opt/airflow/dags/services/great_expectations/uncommitted/data_docs
-    - ~/Downloads/airflow/gx_output/validations:/opt/airflow/dags/services/great_expectations/uncommitted/validations
+    - ~/Downloads/airflow/data:/opt/airflow/data
+    - ~/Projects/great-expectations-research/airflow_dags:/opt/airflow/dags/airflow_dags
+    - ~/Projects/great-expectations-research/common:/opt/airflow/dags/common
+    - ~/Projects/great-expectations-research/services:/opt/airflow/dags/services
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -280,6 +281,13 @@ services:
         published: "9117"
         protocol: tcp
         mode: host
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - 'curl -Ssf localhost:9117'
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
 volumes:
   postgres-db-volume:

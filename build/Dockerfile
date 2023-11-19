@@ -1,4 +1,4 @@
-FROM apache/airflow:2.7.1-python3.11
+FROM apache/airflow:2.7.3-python3.11
 
 ARG USER_ID
 ARG GROUP_ID
