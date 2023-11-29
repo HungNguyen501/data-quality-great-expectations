@@ -61,6 +61,8 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__WEBSERVER__SHOW_TRIGGER_FORM_IF_NO_PARAMS: 'true'
+    AIRFLOW__CORE__DEFAULT_TIMEZONE: 'Asia/Ho_Chi_Minh'
+    AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: 'Asia/Ho_Chi_Minh'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     POSTGRES_HOST: 'postgres'
     POSTGRES_PORT: '5432'
@@ -73,8 +75,8 @@ x-airflow-common:
     - ~/Downloads/airflow/plugins:/opt/airflow/plugins
     - ~/Downloads/airflow/data:/opt/airflow/data
     - ~/Projects/great-expectations-research/airflow_dags:/opt/airflow/dags/airflow_dags
-    - ~/Projects/great-expectations-research/common:/opt/airflow/dags/common
-    - ~/Projects/great-expectations-research/services:/opt/airflow/dags/services
+    - ~/Projects/great-expectations-research/common:/opt/airflow/mrroot501/common
+    - ~/Projects/great-expectations-research/services:/opt/airflow/mrroot501/services
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on

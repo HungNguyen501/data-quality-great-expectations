@@ -5,13 +5,18 @@ ARG GROUP_ID
 
 # ENV http_proxy http://10.40.81.2:8088
 # ENV https_proxy http://10.40.81.2:8088
-
+ENV TZ=Asia/Ho_Chi_Minh
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
 ENV SPARK_HOME=/home/airflow/.local/lib/python3.11/site-packages/pyspark
 ENV HADOOP_CONF_DIR=/opt/airflow/hadoop
 ENV HADOOP_USER_NAME=zdeploy
+ENV COMPANY_FOLDER=mrroot501
+ENV PYTHONPATH=${PYTHONPATH}:/opt/airflow/${COMPANY_FOLDER}
 
 USER root
+
+# Set timezone
+RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 
 # Install java
 RUN apt-get update \
@@ -30,12 +35,12 @@ RUN echo "airflow:x:${USER_ID}:${GROUP_ID}:airflow user:/home/airflow:/sbin/nolo
     && mkdir -p /UID/tmp/multiproc-tmp \
     && chown -R ${USER_ID}:${GROUP_ID} /UID
 
-COPY . /opt/airflow/dags
-WORKDIR /opt/airflow/dags
+COPY . /opt/airflow/${COMPANY_FOLDER}
+WORKDIR /opt/airflow
 
 USER airflow
 
 RUN python3 -m pip install --upgrade pip && \
-    python3 -m pip install -r requirements.txt
+    python3 -m pip install -r ${COMPANY_FOLDER}/requirements.txt
 
 ENTRYPOINT ["/bin/sh", "-c"]
